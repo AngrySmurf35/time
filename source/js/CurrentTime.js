@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import moment from 'moment';
 
 class CurrentTime extends React.Component {
 
@@ -19,21 +20,18 @@ class CurrentTime extends React.Component {
 
   updateCurrentTime() {
       this.setState({
-        curTime: new Date()
+        curTime: moment().format("HH:mm:ss")
       });
   }
 
   render() {
     let time;
+
     if (this.state.curTime) {
-          time = this.state.curTime.toLocaleTimeString();
+          time = `Your current time is: ${this.state.curTime}`;
     }
 
-    return (
-      <div>
-      <h1>{time}</h1>
-      </div>
-    );
+    return <h3>{time}</h3>
   }
 }
 
