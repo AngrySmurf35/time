@@ -1,8 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Map, Marker, InfoWindow, Listing } from 'google-maps-react';
+
 import CurrentDate from "./CurrentDate.js";
 import CurrentTime from "./CurrentTime.js";
 import CurrentTimezone from "./CurrentTimezone.js";
+import CurrentLocationMap from "./CurrentLocationMap.js";
 import moment from 'moment';
 
 class App extends React.Component {
@@ -18,6 +21,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    this.updateCurrentTime();
     setInterval(() => this.updateCurrentTime()
     , 1000);
   }
@@ -29,11 +33,13 @@ class App extends React.Component {
   }
 
   render() {
+
     return (
       <div>
         <CurrentDate />
-        <CurrentTime curTime={this.state.curTime}/>
+        <CurrentTime curTime={this.state.curTime} />
         <CurrentTimezone />
+        <CurrentLocationMap />
       </div>
     );
   }
