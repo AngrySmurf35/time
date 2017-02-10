@@ -22834,7 +22834,7 @@
 	      key: 'componentDidUpdate',
 	      value: function componentDidUpdate(prevProps) {
 	        if (this.props.map !== prevProps.map || this.props.position !== prevProps.position) {
-	          this.marker.setMap(null);
+	          if (this.marker) { this.marker.setMap(null); }
 	          this.renderMarker();
 	        }
 	      }
@@ -22922,6 +22922,7 @@
 
 	  exports.default = Marker;
 	});
+
 
 /***/ },
 /* 189 */
@@ -38456,10 +38457,6 @@
 
 	var _googleMapsReact = __webpack_require__(183);
 
-	var _GoogleApiComponent = __webpack_require__(311);
-
-	var _GoogleApiComponent2 = _interopRequireDefault(_GoogleApiComponent);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -38483,7 +38480,8 @@
 	      return _react2.default.createElement(
 	        "div",
 	        null,
-	        _react2.default.createElement(_googleMapsReact.Map, { google: this.props.google })
+	        _react2.default.createElement(_googleMapsReact.Map, { google: this.props.google }),
+	        _react2.default.createElement(_googleMapsReact.Marker, { name: "here" })
 	      );
 	    }
 	  }]);
@@ -38491,303 +38489,9 @@
 	  return CurrentLocationMap;
 	}(_react2.default.Component);
 
-	exports.default = (0, _GoogleApiComponent2.default)({
+	exports.default = GoogleApiComponent({
 	  apiKey: "AIzaSyBjF5_YLT0onQt7j2C9ku-4BKO30R8oly4"
 	})(CurrentLocationMap);
-
-/***/ },
-/* 311 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.wrapper = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(32);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _ScriptCache = __webpack_require__(312);
-
-	var _ScriptCache2 = _interopRequireDefault(_ScriptCache);
-
-	var _GoogleApi = __webpack_require__(313);
-
-	var _GoogleApi2 = _interopRequireDefault(_GoogleApi);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var defaultMapConfig = {};
-	var wrapper = exports.wrapper = function wrapper(options) {
-	  return function (WrappedComponent) {
-	    var apiKey = options.apiKey;
-	    var libraries = options.libraries || ['places'];
-
-	    var Wrapper = function (_React$Component) {
-	      _inherits(Wrapper, _React$Component);
-
-	      function Wrapper(props, context) {
-	        _classCallCheck(this, Wrapper);
-
-	        var _this = _possibleConstructorReturn(this, (Wrapper.__proto__ || Object.getPrototypeOf(Wrapper)).call(this, props, context));
-
-	        _this.state = {
-	          loaded: false,
-	          map: null,
-	          google: null
-	        };
-	        return _this;
-	      }
-
-	      _createClass(Wrapper, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	          var _this2 = this;
-
-	          var refs = this.refs;
-	          this.scriptCache.google.onLoad(function (err, tag) {
-	            var maps = window.google.maps;
-	            var props = Object.assign({}, _this2.props, {
-	              loaded: _this2.state.loaded
-	            });
-
-	            var mapRef = refs.map;
-
-	            var node = _reactDom2.default.findDOMNode(mapRef);
-	            var center = new maps.LatLng(_this2.props.lat, _this2.props.lng);
-
-	            var mapConfig = Object.assign({}, defaultMapConfig, {
-	              center: center, zoom: _this2.props.zoom
-	            });
-
-	            _this2.map = new maps.Map(node, mapConfig);
-
-	            _this2.setState({
-	              loaded: true,
-	              map: _this2.map,
-	              google: window.google
-	            });
-	          });
-	        }
-	      }, {
-	        key: 'componentWillMount',
-	        value: function componentWillMount() {
-	          this.scriptCache = (0, _ScriptCache2.default)({
-	            google: (0, _GoogleApi2.default)({
-	              apiKey: apiKey,
-	              libraries: libraries
-	            })
-	          });
-	        }
-	      }, {
-	        key: 'render',
-	        value: function render() {
-	          var props = Object.assign({}, this.props, {
-	            loaded: this.state.loaded,
-	            map: this.state.map,
-	            google: this.state.google,
-	            mapComponent: this.refs.map
-	          });
-	          return _react2.default.createElement(
-	            'div',
-	            null,
-	            _react2.default.createElement(WrappedComponent, props),
-	            _react2.default.createElement('div', { ref: 'map' })
-	          );
-	        }
-	      }]);
-
-	      return Wrapper;
-	    }(_react2.default.Component);
-
-	    return Wrapper;
-	  };
-	};
-
-	exports.default = wrapper;
-
-/***/ },
-/* 312 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var counter = 0;
-	var scriptMap = new Map();
-
-	var ScriptCache = exports.ScriptCache = function (global) {
-	  return function ScriptCache(scripts) {
-	    var Cache = {};
-
-	    Cache._onLoad = function (key) {
-	      return function (cb) {
-	        var stored = scriptMap.get(key);
-	        if (stored) {
-	          stored.promise.then(function () {
-	            stored.error ? cb(stored.error) : cb(null, stored);
-	          });
-	        } else {
-	          // TODO:
-	        }
-	      };
-	    };
-
-	    Cache._scriptTag = function (key, src) {
-	      if (!scriptMap.has(key)) {
-	        (function () {
-	          var tag = document.createElement('script');
-	          var promise = new Promise(function (resolve, reject) {
-	            var resolved = false,
-	                errored = false,
-	                body = document.getElementsByTagName('body')[0];
-
-	            tag.type = 'text/javascript';
-	            tag.async = false; // Load in order
-
-	            var cbName = 'loaderCB' + counter++ + Date.now();
-	            var cb = void 0;
-
-	            var handleResult = function handleResult(state) {
-	              return function (evt) {
-	                var stored = scriptMap.get(key);
-	                if (state === 'loaded') {
-	                  stored.resolved = true;
-	                  resolve(src);
-	                  // stored.handlers.forEach(h => h.call(null, stored))
-	                  // stored.handlers = []
-	                } else if (state === 'error') {
-	                  stored.errored = true;
-	                  // stored.handlers.forEach(h => h.call(null, stored))
-	                  // stored.handlers = [];
-	                  reject(evt);
-	                }
-
-	                cleanup();
-	              };
-	            };
-
-	            var cleanup = function cleanup() {
-	              if (global[cbName] && typeof global[cbName] === 'function') {
-	                global[cbName] = null;
-	              }
-	            };
-
-	            tag.onload = handleResult('loaded');
-	            tag.onerror = handleResult('error');
-	            tag.onreadystatechange = function () {
-	              handleResult(tag.readyState);
-	            };
-
-	            // Pick off callback, if there is one
-	            if (src.match(/callback=CALLBACK_NAME/)) {
-	              src = src.replace(/(callback=)[^\&]+/, '$1' + cbName);
-	              cb = window[cbName] = tag.onload;
-	            } else {
-	              tag.addEventListener('load', tag.onload);
-	            }
-	            tag.addEventListener('error', tag.onerror);
-
-	            tag.src = src;
-	            body.appendChild(tag);
-	            return tag;
-	          });
-	          var initialState = {
-	            loaded: false,
-	            error: false,
-	            promise: promise,
-	            tag: tag
-	          };
-	          scriptMap.set(key, initialState);
-	        })();
-	      }
-	      return scriptMap.get(key);
-	    };
-
-	    Object.keys(scripts).forEach(function (key) {
-	      var script = scripts[key];
-	      Cache[key] = {
-	        tag: Cache._scriptTag(key, script),
-	        onLoad: Cache._onLoad(key)
-	      };
-	    });
-
-	    return Cache;
-	  };
-	}(window);
-
-	exports.default = ScriptCache;
-
-/***/ },
-/* 313 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var GoogleApi = exports.GoogleApi = function GoogleApi(opts) {
-	  opts = opts || {};
-
-	  var apiKey = opts.apiKey;
-	  var libraries = opts.libraries || [];
-	  var client = opts.client;
-	  var URL = 'https://maps.googleapis.com/maps/api/js';
-
-	  var googleVersion = '3.22';
-	  var script = null;
-	  var google = window.google = null;
-	  var loading = false;
-	  var channel = null;
-	  var language = null;
-	  var region = null;
-
-	  var onLoadEvents = [];
-
-	  var url = function url() {
-	    var url = URL;
-	    var params = {
-	      key: apiKey,
-	      callback: 'CALLBACK_NAME',
-	      libraries: libraries.join(','),
-	      client: client,
-	      v: googleVersion,
-	      channel: channel,
-	      language: language,
-	      region: region
-	    };
-
-	    var paramStr = Object.keys(params).filter(function (k) {
-	      return !!params[k];
-	    }).map(function (k) {
-	      return k + '=' + params[k];
-	    }).join('&');
-
-	    return url + '?' + paramStr;
-	  };
-
-	  return url();
-	};
-
-	exports.default = GoogleApi;
 
 /***/ }
 /******/ ]);
